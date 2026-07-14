@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>O-NET Reading Quest</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Sarabun', 'TH Sarabun New', sans-serif;
+        }
+
+        /* 🌈 พื้นหลังเคลื่อนไหวได้สไตล์เกม */
+        body {
+            background: linear-gradient(-45deg, #ff9a9e, #fecfef, #a1c4fd, #c2e9fb);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* 🎮 กล่องเกมหลักสไตล์กระจกใส (Glassmorphism) */
+        .game-app {
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 2px solid rgba(255, 255, 255, 0.6);
+            width: 100%;
+            max-width: 900px;
+            min-height: 650px;
+            border-radius: 30px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .header {
+            background: linear-gradient(to right, #ff758c 0%, #ff7eb3 100%);
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 117, 140, 0.3);
+            z-index: 10;
+        }
+
+        .header-title { display: flex; gap: 15px; align-items: center; }
+        .header-title-text h1 { font-size: 32px; font-weight: 800; margin: 0; text-shadow: 2px 2px 4px rgba(0,0,0,0.2); }
+        .header-title-text p { font-size: 20px; opacity: 0.95; font-weight: 500;}
+
+        .score-board {
+            background: rgba(255, 255, 255, 0.3);
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 22px;
+            border: 2px solid rgba(255,255,255,0.8);
+            display: flex;
+            gap: 15px;
+            color: #fff;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .screen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px;
+            flex-grow: 1;
+            animation: fadeIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            overflow-y: auto;
+        }
+
+        .screen.active { display: flex; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .content-box {
+            background: rgba(255, 255, 255, 0.85);
+            border: 2px solid #ffffff;
+            border-radius: 20px;
+            padding: 30px;
+            width: 100%;
+            max-width: 750px;
+            font-size: 26px;
+            line-height: 1.6;
+            color: #333;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        .subtitle-text {
+            font-size: 24px;
+            color: #444;
+            margin-bottom: 30px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        /* 🤖 อนิเมชั่นรูปภาพ NuDee AI Coach */
+        .nudee-mascot { 
+            width: 200px;
+            height: auto;
+            margin-bottom: 15px; 
+            animation: floatMascot 3s ease-in-out infinite;
+            filter: drop-shadow(0 10px 15px rgba(0,0,0,0.1));
+            object-fit: contain;
+        }
+
+        @keyframes floatMascot {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .welcome-title {
+            font-size: 36px;
+            font-weight: 900;
+            background: linear-gradient(to right, #ff4b2b, #ff416c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+            text-align: center;
+            line-height: 1.5;
+            padding: 10px 0;
+        }
+
+        /* ⌨️ ช่องกรอกชื่อ */
+        .name-input {
+            width: 100%;
+            max-width: 450px;
+            padding: 18px 25px;
+            font-size: 28px;
+            font-weight: bold;
+            color: #333;
+            border: 4px solid #ff758c;
+            border-radius: 50px;
+            text-align: center;
+            margin-bottom: 25px;
+            outline: none;
+            transition: all 0.3s;
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 5px 15px rgba(255, 117, 140, 0.2);
+        }
+        .name-input:focus {
+            box-shadow: 0 0 20px rgba(255, 117, 140, 0.5);
+            transform: scale(1.02);
+            background: #ffffff;
+        }
+        .name-input::placeholder { color: #aaa; font-weight: normal; }
+
+        /* 🎮 ปุ่มเข้าสู่ระบบ */
+        .btn-arcade {
+            background: linear-gradient(135deg, #ff758c 0%, #ff7eb3 100%);
+            border: none;
+            padding: 15px 50px;
+            font-size: 28px;
+            font-weight: 900;
+            color: white;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 8px 0 #d94865, 0 15px 20px rgba(0,0,0,0.2);
+            transition: all 0.1s;
+            text-transform: uppercase;
+        }
+        .btn-arcade:active {
+            transform: translateY(8px);
+            box-shadow: 0 0 0 #d94865, 0 5px 10px rgba(0,0,0,0.2);
+        }
+
+        .btn {
+            border: none;
+            padding: 15px 40px;
+            font-size: 24px;
+            font-weight: 700;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            color: white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .btn:hover { transform: translateY(-4px); box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
+        .btn:active { transform: translateY(2px); }
+
+        .btn-primary { background: linear-gradient(135deg, #00c6ff 0%, #0072ff 100%); }
+        .btn-success { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); }
+        .btn-warning { background: linear-gradient(135deg, #f2994a 0%, #f2c94c 100%); color: #333;}
+        .btn-danger { background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%); }
+        .btn-secondary { background: linear-gradient(135deg, #6c757d 0%, #495057 100%); }
+
+        .btn-group { display: flex; gap: 15px; margin-top: 25px; flex-wrap: wrap; justify-content: center; width: 100%; }
+
+        .options-container { display: flex; flex-direction: column; gap: 15px; width: 100%; max-width: 750px; }
+        .option-btn {
+            background: rgba(255, 255, 255, 0.9); border: 3px solid #dee2e6; padding: 15px 25px;
+            border-radius: 15px; font-size: 24px; text-align: left; cursor: pointer;
+            transition: all 0.2s; color: #495057; font-weight: 600; display: flex; align-items: center; gap: 15px;
+        }
+        .option-btn:hover { border-color: #ff758c; background: #fff0f3; transform: translateX(10px); box-shadow: 0 8px 20px rgba(255,117,140,0.2);}
+        .option-label { background: #e9ecef; min-width: 45px; height: 45px; display: flex; justify-content: center; align-items: center; border-radius: 50%; font-weight: bold; font-size: 22px; color: #495057; transition: all 0.2s; }
+        .option-btn:hover .option-label { background: #ff758c; color: white; }
+
+        .result-icon { font-size: 90px; margin-bottom: 15px; animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        
+        @keyframes popIn {
+            0% { transform: scale(0); }
+            80% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        .title-text { color: #2b2d42; margin-bottom: 10px; font-size: 36px; font-weight: 800; text-align: center; }
+        
+        .screen-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; width: 100%; max-width: 750px; }
+        .screen-title { color: #ff4b2b; font-size: 32px; font-weight: bold; text-shadow: 1px 1px 2px rgba(255,255,255,0.8); }
+        
+        .progress-badge { background: rgba(255,255,255,0.8); padding: 8px 20px; border-radius: 20px; font-weight: bold; font-size: 22px; color: #495057; border: 2px solid #ccc; }
+        
+        .result-title { font-size: 50px; margin-bottom: 10px; font-weight: 800; }
+        .result-desc { font-size: 26px; color: #444; margin-bottom: 30px; text-align: center; font-weight: 600;}
+        
+        .score-box { background: linear-gradient(135deg, #11998e, #38ef7d); padding: 15px 40px; border-radius: 20px; border: 3px solid #fff; font-size: 36px; font-weight: 900; color: white; margin-bottom: 40px; text-align: center; box-shadow: 0 10px 20px rgba(56, 239, 125, 0.3);}
+        
+        .final-score-title { color: #d39e00; font-size: 32px; margin-bottom: 10px; font-weight: 800;}
+        .final-score-text { color: #e65100; font-size: 65px; font-weight: 900; margin: 10px 0; text-shadow: 2px 2px 0px #fff;}
+        
+        /* 🏆 กล่องเกียรติบัตรดีไซน์ใหม่สไตล์ไทยประยุกต์และจัดสมดุล A4 แนวตั้ง */
+        .certificate {
+            background-color: #ffffff;
+            background-image: radial-gradient(circle, rgba(255,248,220,0.4) 0%, rgba(255,255,255,0) 75%);
+            
+            /* 👑 กรอบลายไทยประยุกต์สีทองเข้มสลับสว่างซ้อนเลเยอร์ */
+            border: 6px double #b8860b;
+            position: relative;
+            
+            /* ดันระยะห่างให้สมดุล */
+            padding: 50px 45px;
+            width: 100%;
+            max-width: 650px;
+            aspect-ratio: 1 / 1.414; /* อัตราส่วนสัดส่วนทองกระดาษ A4 */
+            
+            display: flex;
+            flex-direction: column;
+            justify-content: space-evenly; /* กระจายข้อความแนวตั้งให้ห่างสมดุลเท่าๆ กันทั่วหน้ากระดาษ */
+            align-items: center;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.18);
+            box-sizing: border-box;
+            margin: 0 auto;
+        }
+
+        /* 🌟 เส้นขลิบทองคู่ด้านในกรอบใหญ่ */
+        .certificate::before {
+            content: "";
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            right: 12px;
+            bottom: 12px;
+            border: 2px solid #d4af37;
+            pointer-events: none;
+        }
+        .certificate::after {
+            content: "";
+            position: absolute;
+            top: 18px;
+            left: 18px;
+            right: 18px;
+            bottom: 18px;
+            border: 1px dashed #d4af37;
+            pointer-events: none;
+        }
+
+        /* ✨ มุมขลิบลายทองโบราณทั้ง 4 มุม */
+        .certificate .corner {
+            position: absolute;
+            width: 35px;
+            height: 35px;
+            border: 3px solid #d4af37;
+            pointer-events: none;
+            z-index: 5;
+        }
+        .certificate .top-left { top: 20px; left: 20px; border-right: none; border-bottom: none; }
+        .certificate .top-right { top: 20px; right: 20px; border-left: none; border-bottom: none; }
+        .certificate .bottom-left { bottom: 20px; left: 20px; border-right: none; border-top: none; }
+        .certificate .bottom-right { bottom: 20px; right: 20px; border-left: none; border-top: none; }
+
+        /* 📝 สไตล์ตัวอักษรและการจัดระเบียบองค์ประกอบในเกียรติบัตร */
+        .cert-mascot {
+            width: 130px;
+            height: auto;
+            object-fit: contain;
+            filter: drop-shadow(0 5px 8px rgba(0,0,0,0.1));
+            z-index: 6;
+        }
+        .cert-title { 
+            font-size: 38px; 
+            color: #996515; 
+            font-weight: 800; 
+            letter-spacing: 1px;
+            text-shadow: 1px 1px 1px rgba(0,0,0,0.05);
+        }
+        .cert-subtitle { font-size: 22px; color: #555; font-weight: 500; }
+        .cert-name { 
+            font-size: 42px; 
+            color: #c92a2a; 
+            font-weight: 800; 
+            padding: 5px 30px;
+            border-bottom: 2px dashed #b8860b;
+            min-width: 60%;
+            text-align: center;
+        }
+        .cert-text { 
+            font-size: 23px; 
+            color: #333; 
+            line-height: 1.6; 
+            font-weight: 500;
+            text-align: center;
+        }
+        .cert-footer-text { font-size: 21px; color: #444; font-weight: 600; }
+        .cert-signature-section { text-align: center; margin-top: 10px; }
+        .cert-sign { font-size: 22px; color: #222; font-weight: 700; }
+        .cert-sign-sub { font-size: 18px; color: #666; font-weight: 500; }
+
+        .footer-credit {
+            margin-top: 15px;
+            font-size: 16px;
+            color: #444;
+            text-align: center;
+            padding: 0 10px;
+            font-weight: 600;
+            text-shadow: 1px 1px 0px rgba(255,255,255,0.5);
+        }
+
+        /* 📱 ระบบมือถือ */
+        @media (max-width: 768px) {
+            body { padding: 10px; align-items: flex-start; }
+            .game-app { min-height: 95vh; border-radius: 20px; }
+            .header { padding: 15px; flex-direction: column; gap: 12px; }
+            .header-title { flex-direction: column; text-align: center; gap: 10px; }
+            .header-title-text h1 { font-size: 24px; }
+            .header-title-text p { font-size: 16px; }
+            .score-board { font-size: 16px; width: 100%; justify-content: space-evenly; gap: 5px; padding: 8px 10px; }
+            .screen { padding: 25px 15px; }
+            .title-text { font-size: 28px; }
+            .welcome-title { font-size: 32px; }
+            .subtitle-text { font-size: 18px; margin-bottom: 20px; }
+            .content-box { font-size: 18px; padding: 20px 15px; }
+            .name-input { font-size: 22px; padding: 15px 20px; }
+            .btn-arcade { font-size: 22px; padding: 12px 30px; }
+            .btn { font-size: 18px; padding: 12px 20px; width: 100%; }
+            .btn-group { flex-direction: column; gap: 10px; }
+            .option-btn { font-size: 18px; padding: 12px 15px; gap: 12px; }
+            .nudee-mascot { width: 140px; }
+            .result-title { font-size: 36px; }
+            
+            /* ย่อส่วนบนจอมือถือไม่ให้พัง */
+            .certificate { padding: 30px 20px; border-width: 4px; }
+            .certificate::before { top: 7px; left: 7px; right: 7px; bottom: 7px; }
+            .certificate::after { top: 12px; left: 12px; right: 12px; bottom: 12px; }
+            .certificate .corner { width: 20px; height: 20px; top: 14px; left: 14px; }
+            .certificate .top-right { right: 14px; left: auto; }
+            .certificate .bottom-left { bottom: 14px; top: auto; }
+            .certificate .bottom-right { bottom: 14px; right: 14px; top: auto; left: auto; }
+            .cert-mascot { width: 85px; }
+            .cert-title { font-size: 24px; }
+            .cert-subtitle { font-size: 16px; }
+            .cert-name { font-size: 26px; padding: 2px 10px; }
+            .cert-text { font-size: 16px; }
+            .cert-footer-text { font-size: 15px; }
+            .cert-sign { font-size: 16px; }
+            .cert-sign-sub { font-size: 14px; }
+        }
+
+        /* 🖨️ ระบบพริ้นต์แบบเต็มหน้ากระดาษ A4 แนวตั้ง */
+        /* 🖨️ ระบบพริ้นต์แบบเต็มหน้ากระดาษ A4 แนวตั้ง (แก้ปัญหาหน้าว่าง) */
+        @media print {
+            @page { size: A4 portrait; margin: 0; }
+            html, body { background: none; padding: 0; margin: 0; width: 100%; height: 100%; }
+            
+            /* ซ่อนปุ่มและส่วนที่ไม่ต้องการพริ้นต์ */
+            .header, .btn, .footer-credit, .print-button-hide, #normal-finish { display: none !important; }
+            
+            /* ลบกรอบเกมออก */
+            .game-app { box-shadow: none !important; border: none !important; background: none !important; backdrop-filter: none !important; min-height: 0 !important; margin: 0 !important; padding: 0 !important; width: 100% !important; display: block !important; }
+            
+            /* 🛑 สำคัญ: ซ่อนหน้าจอเกมทุกหน้าเพื่อไม่ให้กินพื้นที่กระดาษเปล่า */
+            .screen { display: none !important; padding: 0 !important; margin: 0 !important; }
+            
+            /* ✅ เปิดแสดงผลเฉพาะหน้าจบเกมและเกียรติบัตรเท่านั้น */
+            #screen-complete { display: block !important; }
+            #certificate-wrapper { display: block !important; }
+            
+            .certificate { 
+                position: relative;
+                border: 8px solid #b8860b; 
+                box-shadow: none; 
+                margin: 0 auto; 
+                width: 210mm; 
+                height: 297mm; 
+                max-width: none;
+                aspect-ratio: auto;
+                /* จัดขอบด้านในตอนพิมพ์ให้สมดุลพอดีระยะพริ้นต์ */
+                padding: 45mm 25mm 35mm 25mm; 
+                justify-content: space-evenly;
+                box-sizing: border-box;
+                page-break-inside: avoid;
+            }
+            .certificate::before { top: 14mm; left: 14mm; right: 14mm; bottom: 14mm; border: 3px solid #d4af37; }
+            .certificate::after { top: 20mm; left: 20mm; right: 20mm; bottom: 20mm; border: 1px dashed #d4af37; }
+            .certificate .corner { width: 45px; height: 45px; border-width: 4px; }
+            .certificate .top-left { top: 23mm; left: 23mm; }
+            .certificate .top-right { top: 23mm; right: 23mm; }
+            .certificate .bottom-left { bottom: 23mm; left: 23mm; }
+            .certificate .bottom-right { bottom: 23mm; right: 23mm; }
+            
+            .cert-mascot { width: 150px; }
+            .cert-title { font-size: 46px; }
+            .cert-subtitle { font-size: 26px; }
+            .cert-name { font-size: 48px; border-bottom-width: 3px; }
+            .cert-text { font-size: 28px; }
+            .cert-footer-text { font-size: 26px; }
+            .cert-sign { font-size: 26px; }
+            .cert-sign-sub { font-size: 20px; }
+        }
+            .certificate::before { top: 14mm; left: 14mm; right: 14mm; bottom: 14mm; border: 3px solid #d4af37; }
+            .certificate::after { top: 20mm; left: 20mm; right: 20mm; bottom: 20mm; border: 1px dashed #d4af37; }
+            .certificate .corner { width: 45px; height: 45px; border-width: 4px; }
+            .certificate .top-left { top: 23mm; left: 23mm; }
+            .certificate .top-right { top: 23mm; right: 23mm; }
+            .certificate .bottom-left { bottom: 23mm; left: 23mm; }
+            .certificate .bottom-right { bottom: 23mm; right: 23mm; }
+            
+            .cert-mascot { width: 150px; }
+            .cert-title { font-size: 46px; }
+            .cert-subtitle { font-size: 26px; }
+            .cert-name { font-size: 48px; border-bottom-width: 3px; }
+            .cert-text { font-size: 28px; }
+            .cert-footer-text { font-size: 26px; }
+            .cert-sign { font-size: 26px; }
+            .cert-sign-sub { font-size: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="game-app">
+        <!-- ส่วนหัวแสดงชื่อด่านและคะแนน -->
+        <div class="header">
+            <div class="header-title">
+                <div style="background: white; border-radius: 50%; width: 55px; height: 55px; display: flex; justify-content: center; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); overflow: hidden;">
+                    <img src="https://i.postimg.cc/D0FNXGSJ/Nu-Dee-AI-Coach.png" style="width: 100%; height: 100%; object-fit: cover; object-position: center 5%;">
+                </div>
+                <div class="header-title-text">
+                    <h1>Reading Mission</h1>
+                    <p>ภารกิจนักอ่าน พิชิตใจความสำคัญ</p>
+                </div>
+            </div>
+            <div class="score-board" id="score-board-top" style="display: none;">
+                <span>⭐ <span id="xp-display">0</span> XP</span>
+                <span>ข้อที่ <span id="progress-display">0</span>/20</span>
+            </div>
+        </div>
+
+        <!-- หน้าที่ 1: หน้าลงทะเบียนล็อกอิน -->
+        <div id="screen-login" class="screen active">
+            <img src="https://i.postimg.cc/D0FNXGSJ/Nu-Dee-AI-Coach.png" class="nudee-mascot" alt="NuDee AI Coach">
+            
+            <h1 class="welcome-title">พร้อมออกผจญภัย<br>สู่โลกแห่งการอ่านหรือยัง?</h1>
+          
+            <p class="subtitle-text">
+                ภารกิจพิชิต อ่านให้เข้าใจ ตอบให้ถูก เก็บคะแนนให้ครบ!<br>พิมพ์ชื่อ–นามสกุล แล้วเริ่มการผจญภัยได้เลย
+            </p>
+            <input type="text" id="student-name-input" class="name-input" placeholder="👉 พิมพ์ชื่อของนักเรียนที่นี่ 👈" autocomplete="off">
+            <button class="btn-arcade" onclick="login()">START GAME ▶️</button>
+        </div>
+
+        <!-- หน้าที่ 2: หน้าหลักต้อนรับผู้เล่น -->
+        <div id="screen-home" class="screen">
+            <img src="https://i.postimg.cc/D0FNXGSJ/Nu-Dee-AI-Coach.png" class="nudee-mascot" alt="NuDee AI Coach">
+            
+            <h2 class="title-text">ยินดีต้อนรับ, <span id="display-name" style="color: #ff4b2b;"></span>!</h2>
+            <p class="subtitle-text">
+                ภารกิจนี้มีทั้งหมด 20 ข้อ <br>หากหนูทำคะแนนได้ <b>เต็ม 2,000 XP</b> จะได้รับเกียรติบัตรสุดเท่!
+            </p>
+            <div class="content-box" style="background: rgba(255, 243, 205, 0.9); border-color: #ffe69c; max-width: 550px;">
+                <h3 style="color: #856404; margin-bottom: 10px; text-align: center;">💡 ทริคการเล่นจากครูนภาและหนูดี:</h3>
+                <ul style="color: #856404; padding-left: 30px;">
+                    <li>อ่านเนื้อเรื่องให้เข้าใจ หา "ใจความสำคัญ" ที่ครอบคลุมเรื่องทั้งหมด</li>
+                    <li>ตอบถูกรับข้อละ 100 XP สะสมให้ครบ 2,000 XP!</li>
+                </ul>
+            </div>
+            <button class="btn btn-success" onclick="startGame()" style="font-size: 26px; padding: 15px 40px;">ลุยเลย! 🎮</button>
+        </div>
+
+        <!-- หน้าที่ 3: หน้าบทความอ่าน -->
+        <div id="screen-reading" class="screen">
+            <div class="screen-header">
+                <h2 class="screen-title">📖 ภารกิจอ่านบทความ</h2>
+                <span class="progress-badge" id="read-progress">ด่าน 1/20</span>
+            </div>
+            <div class="content-box" id="passage-text"></div>
+            <button class="btn btn-primary" onclick="changeScreen('screen-question')">อ่านเข้าใจแล้ว ไปตอบคำถาม! ➡️</button>
+        </div>
+
+        <!-- หน้าที่ 4: หน้าคำถามและตัวเลือก -->
+        <div id="screen-question" class="screen">
+            <h2 class="title-text" style="color: #ff4b2b;">❓ คำถาม</h2>
+            <div class="content-box" id="question-text" style="background: rgba(224, 247, 250, 0.9); border-color: #b2ebf2; text-align: center; font-weight: bold; color: #006064;"></div>
+            <div class="options-container" id="options-container"></div>
+            
+            <div class="btn-group">
+                <button class="btn btn-secondary" onclick="changeScreen('screen-reading')">📖 ย้อนกลับไปอ่าน</button>
+                <button class="btn btn-warning" onclick="changeScreen('screen-hint')">💡 ขอคำใบ้จาก AI</button>
+            </div>
+        </div>
+
+        <!-- หน้าที่ 5: แสดงเมื่อตอบถูก -->
+        <div id="screen-correct" class="screen">
+            <div class="result-icon">🌟</div>
+            <h1 class="result-title" style="color: #28a745;">เก่งมาก! ตอบถูกต้อง</h1>
+            <p class="result-desc">หนูจับใจความสำคัญของเรื่องได้ยอดเยี่ยม</p>
+            <div class="score-box">
+                +100 XP
+            </div>
+            <button class="btn btn-success" onclick="nextQuestion()">ไปข้อถัดไป ➡️</button>
+        </div>
+
+        <!-- หน้าที่ 6: แสดงเมื่อตอบผิด -->
+        <div id="screen-wrong" class="screen">
+            <div class="result-icon">❌</div>
+            <h1 class="result-title" style="color: #dc3545;">อ๊ะ! ยังไม่ถูกนะ</h1>
+            <p class="result-desc">ลองกลับไปหาประโยคที่คลุมเนื้อหาทั้งหมดดูสิคะ!</p>
+            
+            <div class="btn-group">
+                <button class="btn btn-danger" onclick="changeScreen('screen-question')">🔄 ลองตอบใหม่อีกครั้ง</button>
+                <button class="btn btn-secondary" onclick="changeScreen('screen-reading')">📖 กลับไปอ่าน</button>
+                <button class="btn btn-warning" onclick="changeScreen('screen-hint')">💡 ขอคำใบ้</button>
+            </div>
+        </div>
+
+        <!-- หน้าที่ 7: หน้าแสดงคำใบ้จาก NuDee AI Coach -->
+        <div id="screen-hint" class="screen">
+            <img src="https://i.postimg.cc/D0FNXGSJ/Nu-Dee-AI-Coach.png" class="nudee-mascot" style="width: 150px;" alt="NuDee AI Coach">
+            
+            <h2 class="title-text" style="color: #ff416c;">NuDee AI Coach ช่วยด้วย!</h2>
+            <div class="content-box" style="text-align: center; max-width: 650px;">
+                <span style="font-size: 40px;">💡</span><br><span id="hint-text"></span>
+            </div>
+            <button class="btn btn-primary" onclick="changeScreen('screen-question')">เข้าใจแล้ว! กลับไปตอบ ➡️</button>
+        </div>
+
+        <!-- หน้าที่ 8: จบเกม สรุปผลและเกียรติบัตร -->
+        <div id="screen-complete" class="screen">
+            <!-- แสดงผลเมื่อคะแนนไม่เต็ม 2,000 XP -->
+            <div id="normal-finish" style="text-align: center; width: 100%;">
+                <div class="result-icon">🎉</div>
+                <h1 class="result-title" style="color: #ff416c;">จบภารกิจแล้ว!</h1>
+                <p class="result-desc">พยายามได้ดีมากค่ะ!</p>
+                <div class="content-box" style="margin: 0 auto 30px auto; max-width: 400px; padding: 30px 20px; background: rgba(255, 248, 225, 0.9); border-color: #ffc107;">
+                    <h3 class="final-score-title">คะแนนรวมของหนู</h3>
+                    <p class="final-score-text"><span id="final-xp">0</span> XP</p>
+                </div>
+                <p style="font-size: 18px; color: #dc3545; margin-bottom: 20px; padding: 0 15px; font-weight: bold;">* หากต้องการเกียรติบัตรเชิดชูเกียรติ ต้องทำคะแนนให้ได้ 2,000 XP (เต็ม) นะคะ</p>
+                <button class="btn btn-primary" onclick="location.reload()" style="max-width: 300px;">ลองเล่นใหม่อีกครั้ง 🔄</button>
+            </div>
+
+            <!-- แสดงผลเกียรติบัตรฉบับสมบูรณ์ (เมื่อได้ 2,000 XP เต็ม) -->
+            <div id="certificate-wrapper" style="display: none; width: 100%; text-align: center;">
+                <div id="certificate-box" class="certificate">
+                    <!-- มุมลายทองขลิบประดับโบราณ -->
+                    <div class="corner top-left"></div>
+                    <div class="corner top-right"></div>
+                    <div class="corner bottom-left"></div>
+                    <div class="corner bottom-right"></div>
+                    
+                    <img src="https://i.postimg.cc/D0FNXGSJ/Nu-Dee-AI-Coach.png" class="cert-mascot" alt="NuDee AI Coach">
+                    
+                    <div class="cert-title">เกียรติบัตรเชิดชูเกียรติ</div>
+                    <div class="cert-subtitle">ขอมอบเกียรติบัตรฉบับนี้เพื่อแสดงว่า</div>
+                    <div class="cert-name" id="cert-student-name">ชื่อ - นามสกุล</div>
+                    
+                    <div class="cert-text">
+                        ผ่านการพิชิตภารกิจ "Reading Mission : ภารกิจนักอ่าน พิชิตใจความสำคัญ"<br>
+                        ด้วยคะแนนระดับยอดเยี่ยม <b style="color: #b8860b;">2,000 / 2,000 XP</b>
+                    </div>
+                    
+                    <div class="cert-footer-text">
+                        ขอจงมีความสุข ความเจริญ และตั้งใจศึกษาเล่าเรียนสืบไป
+                    </div>
+                    
+                    <div class="cert-signature-section">
+                        <div style="border-top: 2px solid #333; width: 200px; margin: 0 auto 8px auto;"></div>
+                        <span class="cert-sign">(NuDee AI Coach)</span><br>
+                        <span class="cert-sign-sub">ผู้ฝึกสอน AI ประจำภารกิจ</span>
+                    </div>
+                </div>
+                
+                <!-- ปุ่มพริ้นต์แยกออกจากกล่องเพื่อให้กล่องเกียรติบัตรกระจายตัวคำนวณสัดส่วนได้อย่างแม่นยำ -->
+                <button class="btn btn-success print-button-hide" onclick="window.print()" style="margin-top: 25px; margin-bottom: 15px; font-size: 26px; padding: 15px 50px;">🖨️ พิมพ์เกียรติบัตร</button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- เครดิตผู้พัฒนาด้านล่างหน้าเว็บ -->
+    <div class="footer-credit">
+        พัฒนาโดย นางสาวนภาพร พุทธวงค์ ครูโรงเรียนบ้านเหล่าอุดมทรัพย์สมบูรณ์
+    </div>
+
+    <script>
+        // ฐานข้อมูลคำถามมาตรฐานวิเคราะห์จับใจความสำคัญ 20 ข้อ
+        let questionData = [
+            { passage: "ประเทศไทยมีแหล่งท่องเที่ยวมากมาย ทั้งภูเขา ทะเล น้ำตก การท่องเที่ยวช่วยให้เราได้เรียนรู้สิ่งใหม่ ๆ พบปะผู้คน และทำให้เศรษฐกิจเจริญเติบโต เราจึงควรมีความรับผิดชอบเคารพสถานที่และวัฒนธรรมของท้องถิ่น เพื่อให้การท่องเที่ยวเป็นสิ่งที่ดีและยั่งยืนต่อไป", question: "ข้อใดคือใจความสำคัญของบทความนี้?", options: { A: "ประเทศไทยมีแหล่งท่องเที่ยวที่สวยงาม", B: "การท่องเที่ยวทำให้เราได้พบเพื่อนใหม่", C: "การท่องเที่ยวมีประโยชน์และเราควรท่องเที่ยวอย่างยั่งยืน", D: "เราควรอนุรักษ์สิ่งแวดล้อมเมื่อไปเที่ยว" }, correct: "C", hint: "หาประโยคที่พูดถึง 'ประโยชน์' และ 'ข้อควรปฏิบัติ' ควบคู่กันค่ะ" },
+            { passage: "ขยะพลาสติกเป็นปัญหาใหญ่ระดับโลก เพราะใช้เวลาย่อยสลายนานนับร้อยปี สัตว์ทะเลหลายชนิดต้องตายเพราะกินพลาสติกเข้าไป ดังนั้น การพกถุงผ้าและลดการใช้พลาสติกแบบใช้ครั้งเดียวทิ้ง จะช่วยปกป้องโลกของเราได้", question: "ใจความสำคัญของข้อความนี้คืออะไร?", options: { A: "ขยะพลาสติกใช้เวลาย่อยสลายนาน", B: "สัตว์ทะเลตายเพราะกินพลาสติก", C: "ถุงผ้ามีความทนทานกว่าพลาสติก", D: "การลดใช้พลาสติกช่วยรักษาสิ่งแวดล้อม" }, correct: "D", hint: "ส่วนต้นคือปัญหา ส่วนท้ายคือสิ่งที่ผู้เขียนต้องการบอกให้เราทำค่ะ" },
+            { passage: "น้ำเป็นส่วนประกอบที่สำคัญของร่างกายมนุษย์ การดื่มน้ำอย่างน้อยวันละ 8 แก้ว จะช่วยให้ระบบขับถ่ายทำงานได้ดี ผิวพรรณสดใส และช่วยระบายความร้อน หากร่างกายขาดน้ำอาจทำให้เกิดอาการอ่อนเพลียได้", question: "บทความนี้ต้องการเน้นย้ำเรื่องใด?", options: { A: "ความสำคัญและประโยชน์ของการดื่มน้ำ", B: "การระบายความร้อนของร่างกาย", C: "สาเหตุของอาการอ่อนเพลีย", D: "ปริมาณน้ำในร่างกายมนุษย์" }, correct: "A", hint: "เนื้อหาทั้งหมดอธิบายว่า 'น้ำ' ส่งผลดีต่อเราอย่างไร" },
+            { passage: "การอ่านหนังสือไม่ได้ให้แค่ความสนุกสนาน แต่ยังเป็นการเปิดโลกทัศน์ให้กว้างไกล ช่วยฝึกสมาธิ พัฒนาความจำ และเสริมสร้างจินตนาการ ผู้ที่รักการอ่านจึงมักจะเป็นผู้ที่มีความรอบรู้และแก้ไขปัญหาได้ดี", question: "ข้อใดสรุปใจความสำคัญได้ดีที่สุด?", options: { A: "การอ่านหนังสือทำให้สนุกสนาน", B: "การอ่านหนังสือมีประโยชน์หลายด้าน", C: "ผู้ที่รักการอ่านจะความจำดี", D: "การอ่านช่วยเปิดโลกทัศน์" }, correct: "B", hint: "ตัวเลือกที่รวมทั้งความสนุก ฝึกสมาธิ และความรอบรู้ ไว้ด้วยกันคือข้อไหนเอ่ย?" },
+            { passage: "อาหารมื้อเช้าเป็นมื้อที่สำคัญที่สุดของวัน เพราะร่างกายต้องการพลังงานหลังจากที่นอนหลับมาตลอดคืน การงดอาหารเช้าจะทำให้สมองทำงานช้าลง ขาดสมาธิในการเรียนหรือทำงาน และอาจส่งผลเสียต่อกระเพาะอาหาร", question: "ข้อใดคือใจความสำคัญของเรื่องนี้?", options: { A: "เวลานอนร่างกายไม่ได้ใช้พลังงาน", B: "การงดอาหารเช้าทำให้ปวดท้อง", C: "อาหารเช้ามีความสำคัญต่อการทำงานของร่างกายและสมอง", D: "เราควรทานอาหารเช้าในปริมาณมากๆ" }, correct: "C", hint: "ประโยคแรกของเรื่องมักจะเป็นใจความสำคัญที่บอกภาพรวมทั้งหมดค่ะ" },
+            { passage: "การออกกำลังกายอย่างสม่ำเสมอสัปดาห์ละ 3-4 วัน วันละ 30 นาที จะทำให้กล้ามเนื้อและหัวใจแข็งแรง ช่วยลดความเครียด และทำให้นอนหลับสบายขึ้น ไม่จำเป็นต้องเล่นกีฬาหนักๆ แค่เดินเร็วหรือวิ่งจ๊อกกิ้งก็เพียงพอ", question: "ใจความสำคัญของบทความนี้คืออะไร?", options: { A: "การเดินเร็วดีกว่าการเล่นกีฬาหนักๆ", B: "การออกกำลังกายช่วยลดความเครียด", C: "ประโยชน์ของการออกกำลังกายอย่างสม่ำเสมอ", D: "เราควรออกกำลังกายวันละ 30 นาที" }, correct: "C", hint: "เนื้อหาส่วนใหญ่กำลังบรรยายถึงผลดีที่ตามมาจากการทำกิจกรรมนี้ค่ะ" },
+            { passage: "การพักผ่อนที่ดีที่สุดคือการนอนหลับ เด็กในวัยเรียนควรนอนหลับให้ได้วันละ 8-10 ชั่วโมง เพื่อให้ร่างกายซ่อมแซมส่วนที่สึกหรอ โกรทฮอร์โวนจะหลั่งออกมาช่วยให้ร่างกายเจริญเติบโต ผู้ที่นอนน้อยจะป่วยง่าย", question: "สาระสำคัญของเรื่องนี้กล่าวถึงสิ่งใด?", options: { A: "โกรทฮอร์โมนหลั่งตอนนอนหลับ", B: "เด็กวัยเรียนควรนอนวันละ 8 ชั่วโมง", C: "คนที่นอนน้อยจะทำให้ป่วยง่าย", D: "การนอนหลับอย่างเพียงพอมีความสำคัญต่อร่างกาย" }, correct: "D", hint: "ตัวเลือกนี้สรุปความหมายครอบคลุมทั้งเรื่องการซ่อมแซมร่างกายและการเติบโต" },
+            { passage: "พลังงานไฟฟ้ามีวันหมดไป และกระบวนการผลิตไฟฟ้าก็ส่งผลกระทบต่อสิ่งแวดล้อม ดังนั้น การปิดไฟดวงที่ไม่ใช้ ถอดปลั๊กเครื่องใช้ไฟฟ้า และตั้งอุณหภูมิแอร์ที่ 25 องศา จึงเป็นสิ่งที่ทุกคนต้องร่วมมือกันทำ", question: "ข้อใดคือใจความสำคัญ?", options: { A: "ทุกคนควรช่วยกันประหยัดพลังงานไฟฟ้า", B: "การผลิตไฟฟ้าทำลายสิ่งแวดล้อม", C: "ควรตั้งอุณหภูมิแอร์ที่ 25 องศา", D: "พลังงานไฟฟ้ากำลังจะหมดไป" }, correct: "A", hint: "การปิดไฟ ถอดปลั๊ก และเปิดแอร์ 25 องศา ล้วนเป็นวิธีนำไปสู่อะไร?" },
+            { passage: "ป่าไม้เปรียบเสมือนปอดของโลก ช่วยดูดซับก๊าซคาร์บอนไดออกไซด์และคายออกซิเจน ทำให้สภาพอากาศบริสุทธิ์ นอกจากนี้ยังเป็นแหล่งที่อยู่อาศัยของสัตว์ป่า การตัดไม้ทำลายป่าจึงเท่ากับเป็นการทำลายโลกของเราเอง", question: "บทความนี้ชี้ให้เห็นถึงเรื่องใดเป็นสำคัญ?", options: { A: "สัตว์ป่าไม่มีที่อยู่อาศัยเพราะการตัดไม้", B: "ต้นไม้ช่วยดูดซับก๊าซคาร์บอนไดออกไซด์", C: "ความสำคัญของป่าไม้และผลเสียของการตัดไม้ทำลายป่า", D: "โลกของเรากำลังขาดออกซิเจน" }, correct: "C", hint: "ผู้เขียนพูดถึงประโยชน์ของป่า และเตือนเรื่องการทำลายป่าไปพร้อมๆ กันค่ะ" },
+            { passage: "การเลือกคบเพื่อนมีผลต่อชีวิตของเราอย่างมาก เพื่อนที่ดีจะคอยตักเตือนเมื่อเราทำผิด ชักชวนกันไปทำกิจกรรมที่มีประโยชน์ และช่วยเหลือยามลำบาก ดังคำกล่าวที่ว่า 'คบคนพาลพาลพาไปหาผิด คบบัณฑิตบัณฑิตพาไปหาผล'", question: "ใจความสำคัญของข้อความนี้คือ?", options: { A: "เพื่อนที่ดีต้องช่วยเหลือยามลำบาก", B: "ความสำคัญของการเลือกคบเพื่อนที่ดี", C: "ไม่ควรคบคนพาลเป็นเพื่อน", D: "เพื่อนที่ดีจะชวนไปทำกิจกรรมที่เป็นประโยชน์" }, correct: "B", hint: "ประโยคแรกสุดของบทความนี้คือใจความหลักเลยค่ะ!" },
+            { passage: "ความซื่อสัตย์เป็นรากฐานของความไว้วางใจ ไม่ว่าจะเป็นการพูดความจริง การไม่หยิบฉวยของผู้อื่น หรือการไม่โกงข้อสอบ สังคมที่มีแต่คนซื่อสัตย์จะเป็นสังคมที่มีความสงบสุขและเจริญก้าวหน้า", question: "บทความนี้ต้องการสื่อเรื่องใด?", options: { A: "การโกงข้อสอบเป็นสิ่งที่ไม่ควรทำ", B: "สังคมจะเจริญได้ต้องไม่มีการขโมย", C: "ความไว้วางใจเกิดจากการพูดความจริง", D: "ความซื่อสัตย์เป็นคุณธรรมที่สร้างความสงบสุขให้สังคม" }, correct: "D", hint: "ตัวเลือกที่สรุปผลลัพธ์ของการทำดีทุกข้อรวมกันได้ครบถ้วนที่สุด" },
+            { passage: "สมาร์ทโฟนมีประโยชน์ในการค้นหาข้อมูลและติดต่อสื่อสาร แต่หากใช้มากเกินไปจนติดหน้าจอ อาจทำให้สายตาสั้น เสียสมาธิในการเรียน และขาดปฏิสัมพันธ์กับคนรอบข้าง เราจึงควรแบ่งเวลาการใช้งานให้เหมาะสม", question: "ใจความสำคัญคือข้อใด?", options: { A: "ควรใช้สมาร์ทโฟนอย่างพอดีและแบ่งเวลาให้เหมาะสม", B: "สมาร์ทโฟนมีประโยชน์ในการค้นหาข้อมูล", C: "การเล่นสมาร์ทโฟนมากทำให้สายตาสั้น", D: "เด็กที่ติดมือถือจะขาดปฏิสัมพันธ์กับผู้อื่น" }, correct: "A", hint: "ข้อความตอนท้ายสรุปวิธีแก้ปัญหาที่ผู้เขียนต้องการบอกค่ะ" },
+            { passage: "การรู้จักเก็บออมเงินตั้งแต่วัยเด็ก โดยแบ่งเงินค่าขนมส่วนหนึ่งหยอดกระปุกออมสินทุกวัน เมื่อรวมกันนานวันเข้าก็จะเป็นเงินก้อนใหญ่ นิสัยรักการออมนี้จะช่วยสร้างความมั่นคงในชีวิตเมื่อเราเติบโตเป็นผู้ใหญ่", question: "ข้อใดสรุปใจความสำคัญได้ถูกต้อง?", options: { A: "เด็กๆ ควรหยอดกระปุกออมสินทุกวัน", B: "เงินก้อนใหญ่เกิดจากการเก็บเงินค่าขนม", C: "การออมเงินช่วยสร้างความมั่นคงในอนาคต", D: "ผู้ใหญ่ทุกคนมีความมั่นคงเพราะออมเงิน" }, correct: "C", hint: "เป้าหมายสูงสุดของการหยอดกระปุกที่ผู้เขียนเน้นคืออะไร?" },
+            { passage: "มารยาททางสังคม เช่น การกล่าวคำว่า 'ขอบคุณ' เมื่อได้รับความช่วยเหลือ และ 'ขอโทษ' เมื่อทำผิดพลาด เป็นสิ่งที่แสดงถึงความมีน้ำใจและการเคารพผู้อื่น สิ่งเล็กๆ เหล่านี้ช่วยลดความขัดแย้งและทำให้การอยู่ร่วมกันมีความสุข", question: "สาระสำคัญของข้อความนี้คือ?", options: { A: "เราต้องพูดคำว่าขอบคุณและขอโทษเสมอ", B: "การมีมารยาทที่ดีทำให้สังคมอยู่ร่วมกันอย่างมีความสุข", C: "การเคารพผู้อื่นแสดงออกโดยการพูดขอบคุณ", D: "มารยาททางสังคมช่วยลดความขัดแย้งได้บางส่วน" }, correct: "B", hint: "หาข้อที่สรุป 'ผลลัพธ์ภาพรวม' ของการมีมารยาทค่ะ" },
+            { passage: "ผักและผลไม้หลากสีมีวิตามิน แร่ธาตุ และกากใยอาหารสูงมาก กากใยช่วยปัดกวาดลำไส้ให้สะอาด ป้องกันอาการท้องผูก ส่วนวิตามินช่วยเสริมสร้างภูมิต้านทานโรค การทานผักผลไม้เป็นประจำจึงทำให้ร่างกายแข็งแรง ไม่เจ็บป่วยง่าย", question: "ข้อใดคือใจความสำคัญ?", options: { A: "กากใยอาหารช่วยป้องกันอาการท้องผูก", B: "ผักผลไม้หลากสีมีวิตามินสูง", C: "วิตามินในผลไม้ช่วยสร้างภูมิต้านทานโรค", D: "การทานผักและผลไม้ส่งผลดีต่อสุขภาพร่างกาย" }, correct: "D", hint: "ข้อ A, B, C เป็นเพียงรายละเอียดปลีกย่อยที่อยู่ในข้อ D ค่ะ" },
+            { passage: "ประเทศไทยมักประสบปัญหาภัยแล้งในช่วงฤดูร้อน ทำให้น้ำในเขื่อนลดลง ส่งผลกระทบต่อการเกษตรและน้ำอุปโภคบริโภค การใช้น้ำอย่างประหยัด ปิดก๊อกน้ำเมื่อไม่ใช้ และนำน้ำล้างจานไปรดน้ำต้นไม้ จึงเป็นวิธีที่เราทุกคนช่วยกันได้", question: "ใจความสำคัญของเรื่องนี้คืออะไร?", options: { A: "ทุกคนควรช่วยกันประหยัดน้ำเพื่อรับมือกับภัยแล้ง", B: "ประเทศไทยมีปัญหาภัยแล้งทุกฤดูร้อน", C: "ภัยแล้งส่งผลกระทบต่อเกษตรกรอย่างมาก", D: "เราควรนำน้ำล้างจานไปรดน้ำต้นไม้" }, correct: "A", hint: "การบรรยายปัญหาในตอนแรก เพื่อนำไปสู่วิธีปฏิบัติในตอนท้ายค่ะ" },
+            { passage: "ความกตัญญูกตเวที คือการรู้คุณและตอบแทนคุณผู้ที่ทำดีต่อเรา ไม่ว่าจะเป็นพ่อแม่ ครูบาอาจารย์ หรือผู้มีพระคุณ การแสดงความกตัญญูทำได้หลายวิธี เช่น การเป็นเด็กดี ตั้งใจเรียน และช่วยแบ่งเบาภาระ ถือเป็นเครื่องหมายของคนดี", question: "ข้อใดสรุปใจความสำคัญได้ดีที่สุด?", options: { A: "เราควรช่วยพ่อแม่แบ่งเบาภาระในบ้าน", B: "การตั้งใจเรียนเป็นการตอบแทนพระคุณครู", C: "ความกตัญญูเป็นคุณธรรมสำคัญที่แสดงถึงความเป็นคนดี", D: "เราต้องตอบแทนคุณทุกคนที่ทำดีกับเรา" }, correct: "C", hint: "Ref: ประโยคสรุปความหมายมักจะอยู่ตอนต้นหรือตอนท้ายสุดของข้อความค่ะ" },
+            { passage: "การทำงานกลุ่มจะสำเร็จได้ด้วยดี สมาชิกทุกคนต้องรู้จักรับฟังความคิดเห็นของผู้อื่น แบ่งหน้าที่กันอย่างชัดเจนตามความถนัด และมีความรับผิดชอบต่องานของตน ความสามัคคีคือพลังสำคัญที่ทำให้งานลุล่วงไปได้", question: "ใจความสำคัญของข้อความนี้คืออะไร?", options: { A: "ทุกคนต้องมีความรับผิดชอบต่องาน", B: "การรับฟังความคิดเห็นของผู้อื่น", C: "ความสามัคคีและความรับผิดชอบช่วยให้งานกลุ่มสำเร็จ", D: "การแบ่งหน้าที่ตามความถนัด" }, correct: "C", hint: "หาตัวเลือกที่รวมเอาความร่วมมือและความรับผิดชอบเข้าไว้ด้วยกันค่ะ" },
+            { passage: "โรคไข้เลือดออกมียุงลายเป็นพาหะนำโรค มักระบาดในฤดูฝน การป้องกันทำได้โดยการทำลายแหล่งเพาะพันธุ์ยุง เช่น คว่ำภาชนะที่มีน้ำขัง ปิดฝาโอ่ง และนอนกางมุ้ง เพื่อให้ห่างไกลจากโรคนี้", question: "ข้อใดคือใจความสำคัญ?", options: { A: "โรคไข้เลือดออกระบาดหนักในฤดูฝน", B: "ยุงลายเป็นพาหะนำโรคไข้เลือดออก", C: "การนอนกางมุ้งช่วยป้องกันยุงกัด", D: "วิธีป้องกันโรคไข้เลือดออกคือการกำจัดแหล่งเพาะพันธุ์ยุง" }, correct: "D", hint: "ข้อความนี้เน้นบอก 'วิธีแก้ปัญหา' เป็นหลักค่ะ" },
+            { passage: "ภาษาไทยเป็นภาษาประจำชาติที่แสดงถึงเอกลักษณ์และวัฒนธรรมอันดีงาม เยาวชนไทยควรใช้ภาษาไทยให้ถูกต้อง ทั้งการพูด การเขียน และการอ่าน เพื่อเป็นการสืบสานมรดกทางวัฒนธรรมนี้ให้คงอยู่ตลอดไป", question: "บทความนี้ต้องการเน้นย้ำเรื่องใด?", options: { A: "ภาษาไทยเป็นภาษาประจำชาติ", B: "เยาวชนควรอนุรักษ์และใช้ภาษาไทยให้ถูกต้อง", C: "การพูดและการเขียนภาษาไทยเป็นเรื่องยาก", D: "ภาษาไทยแสดงถึงเอกลักษณ์ของชาติ" }, correct: "B", hint: "สิ่งที่ผู้เขียนอยากให้เยาวชน 'ลงมือปฏิบัติ' คือข้อไหนคะ?" }
+        ];
+
+        let currentQuestionIndex = 0;
+        let scoreXP = 0;
+        let studentName = "";
+        const totalQuestions = questionData.length;
+
+        // ควบคุมการเปลี่ยนหน้าจอ
+        function changeScreen(screenId) {
+            const screens = document.querySelectorAll('.screen');
+            screens.forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+            window.scrollTo(0, 0); 
+        }
+
+        // ลงทะเบียนล็อกอิน
+        function login() {
+            const nameInput = document.getElementById('student-name-input').value.trim();
+            if (nameInput === "") {
+                alert("กรุณาพิมพ์ชื่อนักเรียนก่อนนะคะ ☺️");
+                return;
+            }
+            studentName = nameInput;
+            document.getElementById('display-name').innerText = studentName;
+            document.getElementById('cert-student-name').innerText = studentName;
+            changeScreen('screen-home');
+        }
+
+        // เริ่มต้นเกม
+        function startGame() {
+            currentQuestionIndex = 0;
+            scoreXP = 0;
+            document.getElementById('score-board-top').style.display = 'flex';
+            loadQuestion();
+        }
+
+        // ดึงโจทย์และคำถามปัจจุบันมาแสดงผล
+        function loadQuestion() {
+            const q = questionData[currentQuestionIndex];
+            
+            document.getElementById('xp-display').innerText = scoreXP;
+            document.getElementById('progress-display').innerText = (currentQuestionIndex + 1);
+            document.getElementById('read-progress').innerText = "ด่าน " + (currentQuestionIndex + 1) + "/" + totalQuestions;
+            
+            document.getElementById('passage-text').innerText = q.passage;
+            document.getElementById('question-text').innerText = q.question;
+            document.getElementById('hint-text').innerText = q.hint;
+            
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = ''; 
+            
+            for (const [key, value] of Object.entries(q.options)) {
+                const btn = document.createElement('div');
+                btn.className = 'option-btn';
+                btn.onclick = () => checkAnswer(key);
+                btn.innerHTML = `<div class="option-label">${key}</div> <span>${value}</span>`;
+                optionsContainer.appendChild(btn);
+            }
+            
+            changeScreen('screen-reading');
+        }
+
+        // ตรวจคำถาม
+        function checkAnswer(selectedChoice) {
+            const correctChoice = questionData[currentQuestionIndex].correct;
+            if (selectedChoice === correctChoice) {
+                scoreXP += 100;
+                document.getElementById('xp-display').innerText = scoreXP;
+                changeScreen('screen-correct');
+            } else {
+                changeScreen('screen-wrong');
+            }
+        }
+
+        // ขยับด่าน
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < totalQuestions) {
+                loadQuestion();
+            } else {
+                endGame();
+            }
+        }
+
+        // สรุปผลลัพธ์ท้ายเกม
+        function endGame() {
+            changeScreen('screen-complete');
+            document.getElementById('score-board-top').style.display = 'none'; 
+            
+            // ตรวจเช็คเงื่อนไขคะแนนเต็ม 2,000 XP
+            if (scoreXP >= 2000) {
+                document.getElementById('normal-finish').style.display = 'none';
+                document.getElementById('certificate-wrapper').style.display = 'block';
+            } else {
+                document.getElementById('normal-finish').style.display = 'block';
+                document.getElementById('certificate-wrapper').style.display = 'none';
+                document.getElementById('final-xp').innerText = scoreXP;
+            }
+        }
+        
+        // ผูกปุ่ม Enter ให้สามารถล็อกอินได้
+        document.getElementById('student-name-input').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                login();
+            }
+        });
+    </script>
+</body>
+</html>
