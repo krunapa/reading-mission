@@ -155,14 +155,12 @@
 
         /* 🤖 อนิเมชั่นรูปภาพ NuDee AI Coach */
         .nudee-mascot {
-    width: 320px;
-    height: auto;
-    object-fit: cover;
-    margin-bottom: 20px;
-    animation: floatMascot 3s ease-in-out infinite;
-    filter: drop-shadow(0 12px 25px rgba(0,0,0,0.15));
-    border-radius: 20px;
-    overflow: hidden;
+    width:260px;
+    height:auto;
+    margin-bottom:20px;
+    animation:floatMascot 3s ease-in-out infinite;
+    filter:drop-shadow(0 12px 25px rgba(0,0,0,.15));
+    object-fit:contain;
 }
 
         @keyframes floatMascot {
@@ -493,8 +491,8 @@
 
         <div id="screen-login" class="screen active">
             <video class="nudee-mascot" autoplay muted loop playsinline>
-                <source src="intro.mp4" type="video/mp4">
-            </video>
+    <source src="intro.mp4" type="video/mp4">
+</video>
             <h1 class="welcome-title">Reading Mission<br>ภารกิจนักอ่าน พิชิตใจความสำคัญ</h1>
             <p class="subtitle-text">
                 พร้อมที่จะทำภารกิจหรือยัง ? <br> อ่านให้เข้าใจ ตอบให้ถูก เก็บคะแนนให้ครบ !<br>พิมพ์ชื่อ–นามสกุล แล้วเริ่มภารกิจกันได้เลย
@@ -504,9 +502,7 @@
         </div>
 
         <div id="screen-home" class="screen">
-            <video class="nudee-mascot" autoplay muted loop playsinline>
-                <source src="intro.mp4" type="video/mp4">
-            </video>
+            <img src="https://i.postimg.cc/D0FNXGSJ/Nu-Dee-AI-Coach.png" class="nudee-mascot" alt="NuDee AI Coach">
             <h2 class="title-text">ยินดีต้อนรับ, <span id="display-name" style="color: #ff4b2b;"></span>!</h2>
             <p class="subtitle-text">
                 ภารกิจนี้มีทั้งหมด 20 ข้อ <br>หากทำคะแนนได้ <b>เต็ม 2,000 XP</b> จะได้รับเกียรติบัตรเชิดชูเกียรติ
@@ -562,9 +558,7 @@
         </div>
 
         <div id="screen-hint" class="screen">
-            <video class="nudee-mascot" style="width:150px;" autoplay muted loop playsinline>
-                <source src="intro.mp4" type="video/mp4">
-            </video>
+            <img src="https://i.postimg.cc/D0FNXGSJ/Nu-Dee-AI-Coach.png" class="nudee-mascot" style="width: 150px;" alt="NuDee AI Coach">
             <h2 class="title-text" style="color: #ff416c;">NuDee AI Coach ช่วยด้วย!</h2>
             <div class="content-box" style="text-align: center; max-width: 650px;">
                 <span style="font-size: 40px;">💡</span><br><span id="hint-text"></span>
