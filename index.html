@@ -105,16 +105,16 @@
             to { opacity: 1; transform: translateY(0) scale(1); }
         }
 
-        /* 🎪 ปรับอิโมจิ: ขนาดเล็กลง ไม่มีกรอบ ไม่มีพื้นหลัง */
+        /* 🎪 ปรับอิโมจิ */
         .passage-emoji-box {
-            display: none; /* เปิดผ่าน JS */
+            display: none; 
             justify-content: center;
             align-items: center;
             gap: 10px;
-            font-size: 45px; /* ลดขนาดอิโมจิลง */
-            background: transparent; /* เอาพื้นหลังออก */
-            border: none; /* เอากรอบออก */
-            box-shadow: none; /* เอาเงาออก */
+            font-size: 45px; 
+            background: transparent; 
+            border: none; 
+            box-shadow: none; 
             padding: 0;
             margin-bottom: 15px;
             animation: bounceIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -153,15 +153,57 @@
             font-weight: 600;
         }
 
-        /* 🤖 อนิเมชั่นรูปภาพ NuDee AI Coach */
-        .nudee-mascot {
-    width:260px;
-    height:auto;
-    margin-bottom:20px;
-    animation:floatMascot 3s ease-in-out infinite;
-    filter:drop-shadow(0 12px 25px rgba(0,0,0,.15));
-    object-fit:contain;
-}
+        /* ✨ หน้าแรก: กรอบวิดีโอสี่เหลี่ยมมน + แสงวิบวับประกายดาว */
+        .video-container {
+            position: relative;
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .video-mascot-rounded {
+            width: 320px; 
+            max-width: 100%;
+            border-radius: 25px; /* สี่เหลี่ยมขอบมน */
+            border: 4px solid #fff;
+            object-fit: cover;
+            animation: glowing 2s infinite alternate, floatMascot 4s ease-in-out infinite;
+        }
+
+        @keyframes glowing {
+            from { box-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 20px rgba(255, 117, 140, 0.5); }
+            to { box-shadow: 0 0 20px rgba(255, 255, 255, 1), 0 0 40px rgba(255, 126, 179, 0.8), 0 0 60px rgba(255, 117, 140, 0.6); }
+        }
+
+        .sparkle {
+            position: absolute;
+            font-size: 28px;
+            z-index: 10;
+            animation: twinkle 1.5s infinite alternate;
+            filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.8));
+        }
+        .sparkle-1 { top: -15px; left: -15px; font-size: 35px; animation-delay: 0s; }
+        .sparkle-2 { top: 20%; right: -25px; font-size: 25px; animation-delay: 0.3s; }
+        .sparkle-3 { bottom: 10%; left: -20px; font-size: 30px; animation-delay: 0.6s; }
+        .sparkle-4 { bottom: -15px; right: 10px; font-size: 35px; animation-delay: 0.9s; }
+
+        @keyframes twinkle {
+            0% { transform: scale(0.7) rotate(0deg); opacity: 0.4; }
+            100% { transform: scale(1.3) rotate(25deg); opacity: 1; }
+        }
+
+        /* 🤖 อนิเมชั่นรูปภาพ NuDee AI Coach (หน้าอื่นๆ ยังคงเป็นวงกลม) */
+        .nudee-mascot-circle {
+            width: 240px;
+            height: 240px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 20px;
+            background: rgba(255, 255, 255, 0.4);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            animation: floatMascot 3s ease-in-out infinite;
+        }
 
         @keyframes floatMascot {
             0% { transform: translateY(0px); }
@@ -338,7 +380,6 @@
         .certificate .bottom-left { bottom: 20px; left: 20px; border-right: none; border-top: none; }
         .certificate .bottom-right { bottom: 20px; right: 20px; border-left: none; border-top: none; }
 
-        /* 📝 สไตล์ตัวอักษรและการจัดระเบียบองค์ประกอบในเกียรติบัตร */
         .cert-mascot {
             width: 130px;
             height: auto;
@@ -405,7 +446,12 @@
             .btn { font-size: 18px; padding: 12px 20px; width: 100%; }
             .btn-group { flex-direction: column; gap: 10px; }
             .option-btn { font-size: 18px; padding: 12px 15px; gap: 12px; }
-            .nudee-mascot { width: 140px; }
+            .nudee-mascot-circle { width: 160px; height: 160px; }
+            
+            .video-mascot-rounded { width: 250px; border-radius: 20px; }
+            .sparkle-1 { left: -5px; font-size: 25px; }
+            .sparkle-4 { right: 0; font-size: 25px; }
+
             .result-title { font-size: 36px; }
             
             .certificate { padding: 30px 20px; border-width: 4px; }
@@ -489,10 +535,18 @@
             </div>
         </div>
 
+        <!-- หน้าแรก (Login) แสดงผลเป็นวิดีโอกรอบสี่เหลี่ยมมน + แสงวิบวับประกายดาว -->
         <div id="screen-login" class="screen active">
-            <video class="nudee-mascot" autoplay muted loop playsinline>
-    <source src="intro.mp4" type="video/mp4">
-</video>
+            <div class="video-container">
+                <span class="sparkle sparkle-1">✨</span>
+                <span class="sparkle sparkle-2">⭐</span>
+                <span class="sparkle sparkle-3">🌟</span>
+                <span class="sparkle sparkle-4">✨</span>
+                <video class="video-mascot-rounded" autoplay loop muted playsinline>
+                    <source src="intro.mp4" type="video/mp4">
+                </video>
+            </div>
+            
             <h1 class="welcome-title">Reading Mission<br>ภารกิจนักอ่าน พิชิตใจความสำคัญ</h1>
             <p class="subtitle-text">
                 พร้อมที่จะทำภารกิจหรือยัง ? <br> อ่านให้เข้าใจ ตอบให้ถูก เก็บคะแนนให้ครบ !<br>พิมพ์ชื่อ–นามสกุล แล้วเริ่มภารกิจกันได้เลย
@@ -501,8 +555,9 @@
             <button class="btn-arcade" onclick="login()">START GAME ▶️</button>
         </div>
 
+        <!-- หน้าต้อนรับ แสดงเป็นภาพนิ่งวงกลม (ตามเดิม) -->
         <div id="screen-home" class="screen">
-            <img src="https://i.postimg.cc/D0FNXGSJ/Nu-Dee-AI-Coach.png" class="nudee-mascot" alt="NuDee AI Coach">
+            <img src="https://i.postimg.cc/D0FNXGSJ/Nu-Dee-AI-Coach.png" class="nudee-mascot-circle" alt="NuDee AI Coach">
             <h2 class="title-text">ยินดีต้อนรับ, <span id="display-name" style="color: #ff4b2b;"></span>!</h2>
             <p class="subtitle-text">
                 ภารกิจนี้มีทั้งหมด 20 ข้อ <br>หากทำคะแนนได้ <b>เต็ม 2,000 XP</b> จะได้รับเกียรติบัตรเชิดชูเกียรติ
@@ -557,8 +612,9 @@
             </div>
         </div>
 
+        <!-- หน้าคำใบ้ แสดงเป็นภาพนิ่งวงกลม (ตามเดิม) -->
         <div id="screen-hint" class="screen">
-            <img src="https://i.postimg.cc/D0FNXGSJ/Nu-Dee-AI-Coach.png" class="nudee-mascot" style="width: 150px;" alt="NuDee AI Coach">
+            <img src="https://i.postimg.cc/D0FNXGSJ/Nu-Dee-AI-Coach.png" class="nudee-mascot-circle" style="width: 170px; height: 170px;" alt="NuDee AI Coach">
             <h2 class="title-text" style="color: #ff416c;">NuDee AI Coach ช่วยด้วย!</h2>
             <div class="content-box" style="text-align: center; max-width: 650px;">
                 <span style="font-size: 40px;">💡</span><br><span id="hint-text"></span>
@@ -597,7 +653,7 @@
                     <div class="cert-signature-section">
                         <div style="border-top: 2px solid #333; width: 200px; margin: 0 auto 8px auto;"></div>
                         <span class="cert-sign">(NuDee AI Coach)</span><br>
-                        <span class="cert-sign-sub">ผู้ฝึกสอน AI ประจำภารกิจ</span>
+                        <span class="cert-sign-sub">ผู้ฝึกสอน AIประจำภารกิจ</span>
                     </div>
                 </div>
                 <button class="btn btn-success print-button-hide" onclick="window.print()" style="margin-top: 25px; margin-bottom: 15px; font-size: 26px; padding: 15px 50px;">🖨️ พิมพ์เกียรติบัตร</button>
@@ -610,7 +666,7 @@
     </div>
 
     <script>
-        // ฐานข้อมูลคำถาม 20 ข้อ (ใส่แก๊งอิโมจิสุดน่ารักประจำแต่ละด่านข้อละ 3 ตัว)
+        // ฐานข้อมูลคำถาม 20 ข้อ
         let questionData = [
             { passage: "ประเทศไทยมีแหล่งท่องเที่ยวมากมาย ทั้งภูเขา ทะเล น้ำตก การท่องเที่ยวช่วยให้เราได้เรียนรู้สิ่งใหม่ ๆ พบปะผู้คน และทำให้เศรษฐกิจเจริญเติบโต เราจึงควรมีความรับผิดชอบเคารพสถานที่และวัฒนธรรมของท้องถิ่น เพื่อให้การท่องเที่ยวเป็นสิ่งที่ดีและยั่งยืนต่อไป", question: "ข้อใดคือใจความสำคัญของบทความนี้?", options: { A: "ประเทศไทยมีแหล่งท่องเที่ยวที่สวยงาม", B: "การท่องเที่ยวทำให้เราได้พบเพื่อนใหม่", C: "การท่องเที่ยวมีประโยชน์และเราควรท่องเที่ยวอย่างยั่งยืน", D: "เราควรอนุรักษ์สิ่งแวดล้อมเมื่อไปเที่ยว" }, correct: "C", hint: "หาประโยคที่พูดถึง 'ประโยชน์' และ 'ข้อควรปฏิบัติ' ควบคู่กันค่ะ", emojis: "🇹🇭🏖️🐘" },
             { passage: "ขยะพลาสติกเป็นปัญหาใหญ่ระดับโลก เพราะใช้เวลาย่อยสลายนานนับร้อยปี สัตว์ทะเลหลายชนิดต้องตายเพราะกินพลาสติกเข้าไป ดังนั้น การพกถุงผ้าและลดการใช้พลาสติกแบบใช้ครั้งเดียวทิ้ง จะช่วยปกป้องโลกของเราได้", question: "ใจความสำคัญของข้อความนี้คืออะไร?", options: { A: "ขยะพลาสติกใช้เวลาย่อยสลายนาน", B: "สัตว์ทะเลตายเพราะกินพลาสติก", C: "ถุงผ้ามีความทนทานกว่าพลาสติก", D: "การลดใช้พลาสติกช่วยรักษาสิ่งแวดล้อม" }, correct: "D", hint: "ส่วนต้นคือปัญหา ส่วนท้ายคือสิ่งที่ผู้เขียนต้องการบอกให้เราทำค่ะ", emojis: "🚯🐢🌊" },
@@ -639,7 +695,6 @@
         let studentName = "";
         const totalQuestions = questionData.length;
 
-        // 🎹 ระบบกำเนิดคลื่นเสียงสังเคราะห์ (Web Audio API Synthesizer) 
         let audioCtx = null;
 
         function initAudio() {
@@ -648,7 +703,6 @@
             }
         }
 
-        // 🔊 เสียงตอบถูก
         function playCorrectSound() {
             initAudio();
             if (audioCtx.state === 'suspended') audioCtx.resume();
@@ -670,7 +724,6 @@
             });
         }
 
-        // 🔊 เสียงตอบผิด
         function playWrongSound() {
             initAudio();
             if (audioCtx.state === 'suspended') audioCtx.resume();
@@ -689,7 +742,6 @@
             osc.stop(now + 0.55);
         }
 
-        // 🔊 เสียงแตรฉลองเกียรติบัตร
         function playVictorySound() {
             initAudio();
             if (audioCtx.state === 'suspended') audioCtx.resume();
@@ -719,7 +771,6 @@
             });
         }
 
-        // ควบคุมการเปลี่ยนหน้าจอ
         function changeScreen(screenId) {
             const screens = document.querySelectorAll('.screen');
             screens.forEach(s => s.classList.remove('active'));
@@ -727,7 +778,6 @@
             window.scrollTo(0, 0); 
         }
 
-        // ลงทะเบียนล็อกอิน
         function login() {
             const nameInput = document.getElementById('student-name-input').value.trim();
             if (nameInput === "") {
@@ -741,7 +791,6 @@
             changeScreen('screen-home');
         }
 
-        // เริ่มต้นเกม
         function startGame() {
             currentQuestionIndex = 0;
             scoreXP = 0;
@@ -749,7 +798,6 @@
             loadQuestion();
         }
 
-        // ดึงโจทย์และคำถามปัจจุบันมาแสดงผล (อัปเกรดการประมวลผลกล่องอิโมจิ)
         function loadQuestion() {
             const q = questionData[currentQuestionIndex];
             
@@ -757,7 +805,6 @@
             document.getElementById('progress-display').innerText = (currentQuestionIndex + 1);
             document.getElementById('read-progress').innerText = "ด่าน " + (currentQuestionIndex + 1) + "/" + totalQuestions;
             
-            // แสดงผลแก๊งอิโมจิ 3 ตัวประจำข้อ
             const emojiBox = document.getElementById('passage-emoji-container');
             if (q.emojis && q.emojis !== "") {
                 emojiBox.innerText = q.emojis;
@@ -784,7 +831,6 @@
             changeScreen('screen-reading');
         }
 
-        // ตรวจคำถามพร้อมระเบิดเสียงเอฟเฟกต์
         function checkAnswer(selectedChoice) {
             const correctChoice = questionData[currentQuestionIndex].correct;
             if (selectedChoice === correctChoice) {
@@ -798,7 +844,6 @@
             }
         }
 
-        // ขยับด่าน
         function nextQuestion() {
             currentQuestionIndex++;
             if (currentQuestionIndex < totalQuestions) {
@@ -808,7 +853,6 @@
             }
         }
 
-        // สรุปผลลัพธ์ท้ายเกม
         function endGame() {
             changeScreen('screen-complete');
             document.getElementById('score-board-top').style.display = 'none'; 
