@@ -3,7 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>O-NET Reading Quest</title>
+    <title>Reading Mission</title>
+<meta name="description" content="Reading Mission : ภารกิจนักอ่าน พิชิตใจความสำคัญ เกมฝึกการอ่านจับใจความสำคัญ พร้อมสะสม XP และรับเกียรติบัตร">
+
+<meta property="og:title" content="Reading Mission | ภารกิจนักอ่าน พิชิตใจความสำคัญ">
+
+<meta property="og:description" content="เกมฝึกการอ่านจับใจความสำคัญ พร้อมสะสม XP และรับเกียรติบัตร">
+
+<meta property="og:type" content="website">
+
+<meta property="og:url" content="https://krunapa.github.io/reading-mission/">
+
+<meta property="og:image" content="https://i.postimg.cc/D0FNXGSJ/Nu-Dee-AI-Coach.png">
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         * {
@@ -143,14 +154,14 @@
         }
 
         /* 🤖 อนิเมชั่นรูปภาพ NuDee AI Coach */
-        .nudee-mascot { 
-            width: 200px;
-            height: auto;
-            margin-bottom: 15px; 
-            animation: floatMascot 3s ease-in-out infinite;
-            filter: drop-shadow(0 10px 15px rgba(0,0,0,0.1));
-            object-fit: contain;
-        }
+        .nudee-mascot {
+    width: 260px;
+    height: auto;
+    margin-bottom: 20px;
+    animation: floatMascot 3s ease-in-out infinite;
+    filter: drop-shadow(0 12px 25px rgba(0,0,0,0.15));
+    object-fit: contain;
+}
 
         @keyframes floatMascot {
             0% { transform: translateY(0px); }
@@ -480,9 +491,9 @@
 
         <div id="screen-login" class="screen active">
             <img src="https://i.postimg.cc/D0FNXGSJ/Nu-Dee-AI-Coach.png" class="nudee-mascot" alt="NuDee AI Coach">
-            <h1 class="welcome-title">พร้อมออกผจญภัย<br>สู่โลกแห่งการอ่านหรือยัง?</h1>
+            <h1 class="welcome-title">Reading Mission<br>ภารกิจนักอ่าน พิชิตใจความสำคัญ</h1>
             <p class="subtitle-text">
-                ภารกิจพิชิต อ่านให้เข้าใจ ตอบให้ถูก เก็บคะแนนให้ครบ!<br>พิมพ์ชื่อ–นามสกุล แล้วเริ่มการผจญภัยได้เลย
+                พร้อมที่จะทำภารกิจหรือยัง ? <br> อ่านให้เข้าใจ ตอบให้ถูก เก็บคะแนนให้ครบ !<br>พิมพ์ชื่อ–นามสกุล แล้วเริ่มภารกิจกันได้เลย
             </p>
             <input type="text" id="student-name-input" class="name-input" placeholder="👉 พิมพ์ชื่อของนักเรียนที่นี่ 👈" autocomplete="off">
             <button class="btn-arcade" onclick="login()">START GAME ▶️</button>
@@ -492,7 +503,7 @@
             <img src="https://i.postimg.cc/D0FNXGSJ/Nu-Dee-AI-Coach.png" class="nudee-mascot" alt="NuDee AI Coach">
             <h2 class="title-text">ยินดีต้อนรับ, <span id="display-name" style="color: #ff4b2b;"></span>!</h2>
             <p class="subtitle-text">
-                ภารกิจนี้มีทั้งหมด 20 ข้อ <br>หากทำคะแนนได้ <b>เต็ม 2,000 XP</b> จะได้รับเกียรติบัตรสุดเท่!
+                ภารกิจนี้มีทั้งหมด 20 ข้อ <br>หากทำคะแนนได้ <b>เต็ม 2,000 XP</b> จะได้รับเกียรติบัตรเชิดชูเกียรติ
             </p>
             <div class="content-box" style="background: rgba(255, 243, 205, 0.9); border-color: #ffe69c; max-width: 550px;">
                 <h3 style="color: #856404; margin-bottom: 10px; text-align: center;">💡 ทริคการเล่นจาก NuDee :</h3>
@@ -577,10 +588,10 @@
                     <div class="cert-subtitle">ขอมอบเกียรติบัตรฉบับนี้เพื่อแสดงว่า</div>
                     <div class="cert-name" id="cert-student-name">ชื่อ - นามสกุล</div>
                     <div class="cert-text">
-                        ผ่านการพิชิตภารกิจ "Reading Mission : ภารกิจนักอ่าน พิชิตใจความสำคัญ"<br>
+                        ผ่านการพิชิตภารกิจ <br> Reading Mission <br> ภารกิจนักอ่าน พิชิตใจความสำคัญ <br>
                         ด้วยคะแนนระดับยอดเยี่ยม <b style="color: #b8860b;">2,000 / 2,000 XP</b>
                     </div>
-                    <div class="cert-footer-text">ขอจงมีความสุข ความเจริญ และตั้งใจศึกษาเล่าเรียนสืบไป</div>
+                    <div class="cert-footer-text">ขอจงมีความสุข ความเจริญ <br> และตั้งใจศึกษาเล่าเรียนสืบไป</div>
                     <div class="cert-signature-section">
                         <div style="border-top: 2px solid #333; width: 200px; margin: 0 auto 8px auto;"></div>
                         <span class="cert-sign">(NuDee AI Coach)</span><br>
