@@ -495,10 +495,10 @@
             
             <h2 class="title-text">ยินดีต้อนรับ, <span id="display-name" style="color: #ff4b2b;"></span>!</h2>
             <p class="subtitle-text">
-                ภารกิจนี้มีทั้งหมด 20 ข้อ <br>หากหนูทำคะแนนได้ <b>เต็ม 2,000 XP</b> จะได้รับเกียรติบัตรสุดเท่!
+                ภารกิจนี้มีทั้งหมด 20 ข้อ <br>หากนักเรียนทำคะแนนได้ <b>เต็ม 2,000 XP</b> จะได้รับเกียรติบัตรเชิดชูเกียรติ
             </p>
             <div class="content-box" style="background: rgba(255, 243, 205, 0.9); border-color: #ffe69c; max-width: 550px;">
-                <h3 style="color: #856404; margin-bottom: 10px; text-align: center;">💡 ทริคการเล่นจากครูนภาและหนูดี:</h3>
+                <h3 style="color: #856404; margin-bottom: 10px; text-align: center;">💡 ทริคการเล่นจาก NuDee AI :</h3>
                 <ul style="color: #856404; padding-left: 30px;">
                     <li>อ่านเนื้อเรื่องให้เข้าใจ หา "ใจความสำคัญ" ที่ครอบคลุมเรื่องทั้งหมด</li>
                     <li>ตอบถูกรับข้อละ 100 XP สะสมให้ครบ 2,000 XP!</li>
@@ -533,7 +533,7 @@
         <div id="screen-correct" class="screen">
             <div class="result-icon">🌟</div>
             <h1 class="result-title" style="color: #28a745;">เก่งมาก! ตอบถูกต้อง</h1>
-            <p class="result-desc">หนูจับใจความสำคัญของเรื่องได้ยอดเยี่ยม</p>
+            <p class="result-desc">นักเรียนจับใจความสำคัญของเรื่องได้ยอดเยี่ยม</p>
             <div class="score-box">
                 +100 XP
             </div>
@@ -572,7 +572,7 @@
                 <h1 class="result-title" style="color: #ff416c;">จบภารกิจแล้ว!</h1>
                 <p class="result-desc">พยายามได้ดีมากค่ะ!</p>
                 <div class="content-box" style="margin: 0 auto 30px auto; max-width: 400px; padding: 30px 20px; background: rgba(255, 248, 225, 0.9); border-color: #ffc107;">
-                    <h3 class="final-score-title">คะแนนรวมของหนู</h3>
+                    <h3 class="final-score-title">คะแนนรวมของนักเรียน</h3>
                     <p class="final-score-text"><span id="final-xp">0</span> XP</p>
                 </div>
                 <p style="font-size: 18px; color: #dc3545; margin-bottom: 20px; padding: 0 15px; font-weight: bold;">* หากต้องการเกียรติบัตรเชิดชูเกียรติ ต้องทำคะแนนให้ได้ 2,000 XP (เต็ม) นะคะ</p>
@@ -756,7 +756,7 @@
         function login() {
             const nameInput = document.getElementById('student-name-input').value.trim();
             if (nameInput === "") {
-                alert("กรุณาพิมพ์ชื่อของหนูก่อนนะคะ ☺️");
+                alert("กรุณาพิมพ์ชื่อของนักเรียนก่อนนะคะ ☺️");
                 return;
             }
             studentName = nameInput;
